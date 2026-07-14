@@ -6,23 +6,20 @@ on:
     tags: [ 'v*' ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch: # Позволяет запускать сборку вручную кнопкой в GitHub
+  workflow_dispatch:
 
 jobs:
-  build:
-    name: Build for ${{ matrix.arch }}
+  build-and-release:
+    name: Build and Release
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        # Собираем под все три ключевые архитектуры
-        arch: [arm64, armhf, amd64]
-      fail-fast: false
+    permissions:
+      contents: write # Важно для создания релиза и загрузки файлов
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          submodules: recursive # На случай, если у тебя прилинкованы сабмодули
+          submodules: recursive
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -37,50 +34,39 @@ jobs:
           python3 -m pip install --upgrade pip
           pip3 install clickable-ut
 
-      - name: Build Click Package
-        run: |
-          # Запускаем сборку под конкретную архитектуру через Docker-окружение Clickable
-          clickable build --arch ${{ matrix.arch }}
+      - name: Build for ARM64
+        run: clickable build --arch arm64
 
-      - name: Find and Rename Click Package
-        id: find_click
+      - name: Build for ARMHF
+        run: clickable build --arch armhf
+
+      - name: Build for AMD64
+        run: clickable build --arch amd64
+
+      - name: Collect Click Packages
+        id: collect_files
         run: |
-          # Clickable обычно выплевывает собранный .click в корень или build/
-          CLICK_FILE=$(find . -name "*.click" | head -n 1)
-          if [ -z "$CLICK_FILE" ]; then
-            echo "Ошибка: .click пакет не найден!" && exit 1
+          mkdir dist
+          # Находим все собранные клик-пакеты во всех папках и копируем их в одну папку dist
+          find . -name "*.click" -exec cp {} dist/ \;
+          echo "Содержимое папки dist:"
+          ls -l dist
+          
+          # Проверяем, что нашли файлы
+          if [ -z "$(ls -A dist)" ]; then
+            echo "Ошибка: клик-пакеты не найдены!" && exit 1
           fi
-          echo "Найден пакет: $CLICK_FILE"
-          echo "click_path=$CLICK_FILE" >> $GITHUB_OUTPUT
 
-      - name: Upload Artifact to GitHub Actions
+      - name: Upload Artifacts (To Actions tab)
         uses: actions/upload-artifact@v4
         with:
-          name: click-package-${{ matrix.arch }}
-          path: ${{ steps.find_click.outputs.click_path }}
+          name: click-packages-all
+          path: dist/*.click
 
-  release:
-    name: Create GitHub Release
-    needs: build
-    if: startsWith(github.ref, 'refs/tags/v') # Запускается только при пуше тега (например, v1.0.0)
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-
-      - name: Flatten directory structure
-        run: |
-          mkdir release_files
-          find artifacts -name "*.click" -exec cp {} release_files/ \;
-          ls -R release_files
-
-      - name: Release to GitHub
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v') # Сработает только при пуше тега
         uses: softprops/action-gh-release@v2
         with:
-          files: release_files/*.click
+          files: dist/*.click
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
