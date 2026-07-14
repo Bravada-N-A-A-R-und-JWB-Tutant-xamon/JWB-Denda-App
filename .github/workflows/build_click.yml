@@ -1,0 +1,86 @@
+name: Build UT Click Packages
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # Позволяет запускать сборку вручную кнопкой в GitHub
+
+jobs:
+  build:
+    name: Build for ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # Собираем под все три ключевые архитектуры
+        arch: [arm64, armhf, amd64]
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive # На случай, если у тебя прилинкованы сабмодули
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Clickable
+        run: |
+          python3 -m pip install --upgrade pip
+          pip3 install clickable-ut
+
+      - name: Build Click Package
+        run: |
+          # Запускаем сборку под конкретную архитектуру через Docker-окружение Clickable
+          clickable build --arch ${{ matrix.arch }}
+
+      - name: Find and Rename Click Package
+        id: find_click
+        run: |
+          # Clickable обычно выплевывает собранный .click в корень или build/
+          CLICK_FILE=$(find . -name "*.click" | head -n 1)
+          if [ -z "$CLICK_FILE" ]; then
+            echo "Ошибка: .click пакет не найден!" && exit 1
+          fi
+          echo "Найден пакет: $CLICK_FILE"
+          echo "click_path=$CLICK_FILE" >> $GITHUB_OUTPUT
+
+      - name: Upload Artifact to GitHub Actions
+        uses: actions/upload-artifact@v4
+        with:
+          name: click-package-${{ matrix.arch }}
+          path: ${{ steps.find_click.outputs.click_path }}
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v') # Запускается только при пуше тега (например, v1.0.0)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Flatten directory structure
+        run: |
+          mkdir release_files
+          find artifacts -name "*.click" -exec cp {} release_files/ \;
+          ls -R release_files
+
+      - name: Release to GitHub
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release_files/*.click
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
