@@ -1,0 +1,15 @@
+{
+    "name": "jwb-denda.jwb-tutantxamon-n-jwb-bravada",
+    "description": "JWB-Denda - it's My personal Store of My apps, which they're banned in OpenStore, yeayh, it's analog of AppStore, OpenStore and Play Market, but, it's based on GitHub servers. Of course: In charge of My powers and in Resistance of Tobiyo and Dobey. Ehre der Bravada! Heil Stalin! Слава JWB-Tutant'xamon, С.Н.А.А.Р и Браваде! Нас не забанишь... Вы - проиграли",
+    "architecture": "@CLICK_ARCH@",
+    "title": "JWB-Denda",
+    "hooks": {
+        "jwb-denda": {
+            "apparmor": "jwb-denda.apparmor",
+            "desktop":  "jwb-denda.desktop"
+        }
+    },
+    "version": "1.0.0",
+    "maintainer": "JWB-Denda Equipo <jwb.denda.io@gmail.com>",
+    "framework" : "@CLICK_FRAMEWORK@"
+}

@@ -1,0 +1,60 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>MainStore.qml</file>
+        <file>SearchPage.qml</file>
+        <file>SettingsPage.qml</file>
+        <file>ApplicationPage.qml</file>
+        <file>CategoriesPage.qml</file>
+        <file>ChatPage.qml</file>
+        <file>InAppDiscussionsPage.qml</file>
+        <file>AboutPage.qml</file>
+        <file>WelcomePage.qml</file>
+        <file>Wizard/Read-this.txt</file>
+        <file>Wizard/StartupPage.qml</file>
+        <file>Wizard/Tutorial.qml</file>
+        <file>Modules/Storage.js</file>
+        <file>Modules/AdministratorsRights.js</file>
+        <file>Modules/AppsActions.js</file>
+        <file>Modules/Messenger.js</file>
+        <file>Modules/ServersAndProxies.js</file>
+        <file>Plug-ins/api.cpp</file>
+        <file>Plug-ins/api.h</file>
+        <file>Plug-ins/bypass.cpp</file>
+        <file>Plug-ins/bypass.h</file>
+        <file>Plug-ins/jwbstore.cpp</file>
+        <file>Plug-ins/jwbstore.h</file>
+        <file>Genei-Shadow.svg</file>
+        <file>InstalledAppsPage.qml</file>
+        <file>Assets/JWB-Denda Logo (none).svg</file>
+        <file>Assets/JWB-Denda banner.svg</file>
+        <file>Assets/fonts/aller-light.ttf</file>
+        <file>Assets/fonts/allercyrillic.ttf</file>
+        <file>Assets/icons/afegeix (add (anyadir)).svg</file>
+        <file>Assets/icons/back.svg</file>
+        <file>Assets/icons/backward.svg</file>
+        <file>Assets/icons/close.svg</file>
+        <file>Assets/icons/download (descargar (deskarga)).svg</file>
+        <file>Assets/icons/ok.svg</file>
+        <file>Assets/icons/parametres.svg</file>
+        <file>Assets/icons/search.svg</file>
+        <file>Assets/icons/settings.svg</file>
+        <file>Modules/JWB-Store.js</file>
+        <file>ProfilePage.qml</file>
+        <file>InboxPage.qml</file>
+        <file>Menu.qml</file>
+        <file>Assets/Operation Systems Logotypes/ubuntu-touch.svg</file>
+        <file>Assets/Operation Systems Logotypes/android.svg</file>
+        <file>Assets/Operation Systems Logotypes/debian.svg</file>
+        <file>Assets/Operation Systems Logotypes/gentoo.svg</file>
+        <file>Assets/Operation Systems Logotypes/kali.svg</file>
+        <file>Assets/Operation Systems Logotypes/linux.svg</file>
+        <file>Assets/Operation Systems Logotypes/manjaro_desktop.svg</file>
+        <file>Assets/Operation Systems Logotypes/ubuntu_cinnamon.svg</file>
+        <file>Assets/Operation Systems Logotypes/ubuntu_desktop.svg</file>
+        <file>Assets/Operation Systems Logotypes/windows.svg</file>
+        <file>Librarie/AssortiButton.qml</file>
+        <file>Librarie/LiamelonButton.qml</file>
+        <file>Librarie/ToosieSwitch.qml</file>
+    </qresource>
+</RCC>

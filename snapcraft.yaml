@@ -1,0 +1,76 @@
+name: jwb-denda
+version: 0.1
+base: core24
+summary: JWB-Denda
+description: JWB-Denda - it's My personal Store of My apps, which they're banned in OpenStore, yeayh, it's analog of AppStore, OpenStore and Play Market, but, it's based on GitHub servers. Of course: In charge of My powers and in Resistance of Tobiyo and Dobey. Ehre der Bravada!^[Heil Stalin! Слава JWB-Tutant'xamon, С.Н.А.А.Р и Браваде! Нас не забанишь... Вы - проиграли
+confinement: strict
+grade: stable
+
+platforms:
+  amd64:
+  arm64:
+  armhf:
+
+apps:
+  jwb-denda:
+    desktop: jwb-denda.desktop
+
+    command: jwb-denda
+
+    command-chain:
+      - bin/gpu-2404-wrapper
+      - bin/lomiri-launch
+    plugs:
+      - opengl
+      - wayland
+
+plugs:
+  lomiri-ui-toolkit:
+    interface: content
+    target: $SNAP/lomiri-ui-toolkit
+    default-provider: lomiri-ui-toolkit-core24
+  gpu-2404:
+    interface: content
+    target: $SNAP/gpu-2404
+    default-provider: mesa-2404
+
+layout:
+  /usr/share/X11/xkb:
+    symlink: $SNAP/lomiri-ui-toolkit/usr/share/X11/xkb
+  /usr/share/icons:
+    bind: $SNAP/lomiri-ui-toolkit/usr/share/icons
+  /usr/share/sounds:
+    bind: $SNAP/usr/share/sounds
+
+parts:
+  main:
+
+    plugin: cmake
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/
+
+    source: .
+    build-snaps:
+      - lomiri-ui-toolkit-core24
+    build-packages:
+      - qtbase5-dev
+      - qtbase5-dev-tools
+      - qtdeclarative5-dev
+      - qtquickcontrols2-5-dev
+      - intltool
+
+    override-prime: |
+        craftctl default
+        mkdir -p ${CRAFT_PRIME}/bin
+        cp -a /snap/lomiri-ui-toolkit-core24/current/command-chain/lomiri-launch ${CRAFT_PRIME}/bin/lomiri-launch
+
+  gpu-2404:
+    after:
+      - main
+    source: https://github.com/canonical/gpu-snap.git
+    plugin: dump
+    override-prime: |
+      craftctl default
+      ${CRAFT_PART_SRC}/bin/gpu-2404-cleanup mesa-2404
+    prime:
+      - bin/gpu-2404-wrapper

@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=JWB-Denda
+Name[en]=JWB-Store
+Name[ru]=JWB-Магаз
+Name[ca]=JWB-Botiga
+Name[eu]=JWB'eko-Denda
+Name[es]=JWB-Tienda
+Exec=JWB-Denda %U
+Icon=Denda_Ikonoa.svg
+X-Lomiri-Splash-Color=#388a5e
+X-Lomiri-Splash-Image=Denda_Splash.svg
+Terminal=false
+Type=Application
+X-Lomiri-Touch=true
